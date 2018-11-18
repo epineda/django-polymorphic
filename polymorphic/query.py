@@ -379,7 +379,9 @@ class PolymorphicQuerySet(QuerySet):
         # Then we copy the extra() select fields from the base objects to the real objects.
         # TODO: defer(), only(): support for these would be around here
         for real_concrete_class, idlist in idlist_per_model.items():
-            real_objects = real_concrete_class._base_objects.db_manager(self.db).filter(**{
+
+            # Get real objetcs using _default_manager to support custom managers in subclassed models
+            real_objects = real_concrete_class._default_manager.db_manager(self.db).filter(**{
                 ('%s__in' % pk_name): idlist,
             })
 
