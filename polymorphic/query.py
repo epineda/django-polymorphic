@@ -382,7 +382,10 @@ class PolymorphicQuerySet(QuerySet):
             real_objects = real_concrete_class._base_objects.db_manager(self.db).filter(**{
                 ('%s__in' % pk_name): idlist,
             })
-            real_objects.query.select_related = self.query.select_related  # copy select related configuration to new qs
+
+            # Only copy select related configuration to new qs if it is defined
+            if self.query.select_related:
+                real_objects.query.select_related = self.query.select_related
 
             # Copy deferred fields configuration to the new queryset
             deferred_loading_fields = []
