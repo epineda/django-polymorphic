@@ -385,9 +385,12 @@ class PolymorphicQuerySet(QuerySet):
                 ('%s__in' % pk_name): idlist,
             })
 
-            # Only copy select related configuration to new qs if it is defined
+            # Only update select related configuration to new qs if it is defined
             if self.query.select_related:
-                real_objects.query.select_related = self.query.select_related
+                if real_objects.query.select_related:
+                    real_objects.query.select_related.update(self.query.select_related)
+                else:
+                    real_objects.query.select_related = self.query.select_related
 
             # Copy deferred fields configuration to the new queryset
             deferred_loading_fields = []
